@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+      }
+      input {
+        margin: 10px 0;
+        padding: 8px;
+        width: 100px;
+      }
+      button {
+        padding: 10px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Weight Tracker</h2>
+    <button onclick="connectBLE()">1. Connect Arduino</button>
+    <p id="status">Status: Disconnected</p>
+    <hr />
+
+    <label>Start Weight:</label><br />
+    <input type="number" id="startInput" step="0.1" min="0" /><button
+      onclick="sendWeight('start')"
+    >
+      Send</button
+    ><br />
+
+    <label>Goal Weight:</label><br />
+    <input type="number" id="goalInput" step="0.1" min="0" /><button
+      onclick="sendWeight('goal')"
+    >
+      Send</button
+    ><br />
+
+    <label>Current Weight:</label><br />
+    <input type="number" id="currentInput" step="0.1" min="0" /><button
+      onclick="sendWeight('current')"
+    >
+      Send
+    </button>
+
+    <script>
+      let chars = {};
+      const SERVICE_UUID = "19b10000-e8f2-537e-4f6c-d104768a1214";
+      const UUIDS = {
+        start: "19b10002-e8f2-537e-4f6c-d104768a1214",
+        goal: "19b10003-e8f2-537e-4f6c-d104768a1214",
+        current: "19b10004-e8f2-537e-4f6c-d104768a1214",
+      };
+
+      async function connectBLE() {
+        try {
+          const device = await navigator.bluetooth.requestDevice({
+            filters: [{ name: "NanoESP32_WeightScale" }],
+            optionalServices: [SERVICE_UUID],
+          });
+          const server = await device.gatt.connect();
+          const service = await server.getPrimaryService(SERVICE_UUID);
+
+          // Map all characteristics
+          chars.start = await service.getCharacteristic(UUIDS.start);
+          chars.goal = await service.getCharacteristic(UUIDS.goal);
+          chars.current = await service.getCharacteristic(UUIDS.current);
+
+          document.getElementById("status").innerText = "Status: Ready!";
+        } catch (e) {
+          document.getElementById("status").innerText = "Error: " + e;
+        }
+      }
+
+      async function sendWeight(type) {
+        if (!chars[type]) return alert("Connect first!");
+        const val = parseFloat(document.getElementById(type + "Input").value);
+
+        // Convert float to 4-byte buffer
+        const buffer = new Float32Array([val]).buffer;
+        await chars[type].writeValue(buffer);
+        console.log(`Sent ${type}: ${val}`);
+      }
+    </script>
+  </body>
+</html>

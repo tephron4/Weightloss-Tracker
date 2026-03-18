@@ -2,17 +2,18 @@
 
 Arduino project for tracking weight loss progress with LEDs
 
-## Current State
+## Weight Tracker Controller (weight-tracker.ino)
 
-> **NOTE:**
-> The current state is only for testing connecting to the arduino wirelessly via bluetooth.
+Logic for arduino to recieve weight values over bluetooth.
 
-Upload the controller code (led-controller.ino) to the arduino and visit the web controller in order to connect to and control the arduino.
+## Web Application (web-app.html)
+
+Web application for connecting to the arduino (via bluetooth), entering weight values, and sending the values to the arduino.
 
 ## Led Controller (led-controller.ino)
 
-Contains logic for controlling the LEDs connected to the arduino based on the weight variables.
+Contains logic for controlling the onboard LED on the arduino. This is used to test the bluetooth connection to the arduino.
 
-## Web Controller (web-controller.ino)
+## Web Controller (web-controller.html)
 
 Web app that handles sending values to the arduino over bluetooth.
