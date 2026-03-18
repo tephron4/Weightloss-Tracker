@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <body>
+    <h1>Arduino Nano ESP32 Control</h1>
+    <button onclick="connectBLE()">1. Connect to Arduino</button><br /><br />
+    <button onclick="sendData(1)">Turn LED ON</button>
+    <button onclick="sendData(0)">Turn LED OFF</button>
+    <p id="status">Status: Disconnected</p>
+
+    <script>
+      let device, server, characteristic;
+      const SERVICE_UUID = "19b10000-e8f2-537e-4f6c-d104768a1214";
+      const CHAR_UUID = "19b10001-e8f2-537e-4f6c-d104768a1214";
+
+      async function connectBLE() {
+        try {
+          document.getElementById("status").innerText = "Searching...";
+          device = await navigator.bluetooth.requestDevice({
+            filters: [{ name: "NanoESP32_Control" }],
+            optionalServices: [SERVICE_UUID],
+          });
+
+          server = await device.gatt.connect();
+          const service = await server.getPrimaryService(SERVICE_UUID);
+          characteristic = await service.getCharacteristic(CHAR_UUID);
+
+          document.getElementById("status").innerText = "Connected!";
+        } catch (error) {
+          console.log(error);
+          document.getElementById("status").innerText = "Error: " + error;
+        }
+      }
+
+      async function sendData(value) {
+        if (characteristic) {
+          const data = new Uint8Array([value]);
+          await characteristic.writeValue(data);
+        }
+      }
+    </script>
+  </body>
+</html>
