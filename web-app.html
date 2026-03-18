@@ -44,6 +44,16 @@
       Send
     </button>
 
+    <label>Progress:</label><br />
+    <input
+      type="number"
+      id="progressInput"
+      step="0.1"
+      min="0"
+      max="100"
+      disabled
+    />
+
     <hr />
     <button
       onclick="resetWeights()"
@@ -59,7 +69,8 @@
         start: "19b10002-e8f2-537e-4f6c-d104768a1214",
         goal: "19b10003-e8f2-537e-4f6c-d104768a1214",
         current: "19b10004-e8f2-537e-4f6c-d104768a1214",
-        reset: "19b10005-e8f2-537e-4f6c-d104768a1214",
+        progress: "19b10005-e8f2-537e-4f6c-d104768a1214",
+        reset: "19b10006-e8f2-537e-4f6c-d104768a1214",
       };
 
       async function connectBLE() {
@@ -75,6 +86,7 @@
           chars.start = await service.getCharacteristic(UUIDS.start);
           chars.goal = await service.getCharacteristic(UUIDS.goal);
           chars.current = await service.getCharacteristic(UUIDS.current);
+          chars.progress = await service.getCharacteristic(UUIDS.progress);
           chars.reset = await service.getCharacteristic(UUIDS.reset);
 
           document.getElementById("status").innerText =
@@ -95,6 +107,7 @@
           const startData = await chars.start.readValue();
           const goalData = await chars.goal.readValue();
           const currentData = await chars.current.readValue();
+          const progressData = await chars.progress.readValue();
 
           // Update the input fields with the retrieved values
           document.getElementById("startInput").value = new DataView(
@@ -109,6 +122,11 @@
             .toFixed(1);
           document.getElementById("currentInput").value = new DataView(
             currentData.buffer,
+          )
+            .getFloat32(0, true)
+            .toFixed(1);
+          document.getElementById("progressInput").value = new DataView(
+            progressData.buffer,
           )
             .getFloat32(0, true)
             .toFixed(1);
