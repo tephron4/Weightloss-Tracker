@@ -41,18 +41,11 @@
     <input type="number" id="currentInput" step="0.1" min="0" /><button
       onclick="sendWeight('current')"
     >
-      Send
-    </button>
+      Send</button
+    ><br />
 
-    <label>Progress:</label><br />
-    <input
-      type="number"
-      id="progressInput"
-      step="0.1"
-      min="0"
-      max="100"
-      disabled
-    />
+    <label>Progress:</label>
+    <label id="progressLabel" disabled>0.0%</label><br />
 
     <hr />
     <button
@@ -125,11 +118,9 @@
           )
             .getFloat32(0, true)
             .toFixed(1);
-          document.getElementById("progressInput").value = new DataView(
-            progressData.buffer,
-          )
-            .getFloat32(0, true)
-            .toFixed(1);
+          document.getElementById("progressLabel").innerText =
+            new DataView(progressData.buffer).getFloat32(0, true).toFixed(1) +
+            "%";
 
           console.log("Weights synced from Arduino.");
         } catch (e) {
