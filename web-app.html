@@ -56,7 +56,7 @@
       async function connectBLE() {
         try {
           const device = await navigator.bluetooth.requestDevice({
-            filters: [{ name: "NanoESP32_WeightScale" }],
+            filters: [{ name: "NanoESP32_WeightTracker" }],
             optionalServices: [SERVICE_UUID],
           });
           const server = await device.gatt.connect();
