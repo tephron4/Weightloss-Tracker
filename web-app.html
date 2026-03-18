@@ -118,13 +118,23 @@
           )
             .getFloat32(0, true)
             .toFixed(1);
-          document.getElementById("progressLabel").innerText =
-            new DataView(progressData.buffer).getFloat32(0, true).toFixed(1) +
-            "%";
+          pullProgress();
 
           console.log("Weights synced from Arduino.");
         } catch (e) {
           console.error("Sync failed: ", e);
+        }
+      }
+
+      async function pullProgress() {
+        if (!chars.progress) return;
+        try {
+          const progressData = await chars.progress.readValue();
+          document.getElementById("progressLabel").innerText =
+            new DataView(progressData.buffer).getFloat32(0, true).toFixed(1) +
+            "%";
+        } catch (e) {
+          console.error("Failed to pull progress: ", e);
         }
       }
 
@@ -141,6 +151,7 @@
         // Convert float to 4-byte buffer
         const buffer = new Float32Array([val]).buffer;
         await chars[type].writeValue(buffer);
+        pullProgress();
         console.log(`Sent ${type}: ${val}`);
       }
 
