@@ -12,9 +12,9 @@ BLEFloatCharacteristic currentWeightChar("19B10004-E8F2-537E-4F6C-D104768A1214",
 BLEFloatCharacteristic progressPercentageChar("19B10005-E8F2-537E-4F6C-D104768A1214", BLERead);
 BLEByteCharacteristic resetChar("19B10006-E8F2-537E-4F6C-D104768A1214", BLEWrite);
 
-int latchPin = 10;
+int latchPin = 8;
 int clockPin = 9;
-int dataPin = 8;
+int dataPin = 10;
 
 int leds = 0;
 
